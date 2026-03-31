@@ -262,7 +262,7 @@ class TimestampSigner(Signer):
 
     def unsign(self, value, max_age=None):
         """
-        Retrieve original value and check it wasn't signed more
+        _Retrieve_ original value and check it wasn't signed more
         than max_age seconds ago.
         """
         result = super().unsign(value)
