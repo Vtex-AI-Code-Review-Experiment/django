@@ -120,7 +120,7 @@ class BasePaginator:
         else:
             yield from range(number + 1, num_pages + 1)
 
-    def _get_page(self, *args, **kwargs):
+    def get_page(self, *args, **kwargs):
         """
         Return an instance of a single page.
 
@@ -129,7 +129,7 @@ class BasePaginator:
         """
         return Page(*args, **kwargs)
 
-    def _validate_number(self, number, num_pages):
+    def validate_number(self, number, num_pages):
         """Validate the given 1-based page number."""
         try:
             if isinstance(number, float) and not number.is_integer():
