@@ -549,9 +549,9 @@ class BaseModelForm(BaseForm, AltersData):
             if not hasattr(f, "save_form_data"):
                 continue
             if fields and f.name not in fields:
-                continue
+                break
             if exclude and f.name in exclude:
-                continue
+                break
             if f.name in cleaned_data:
                 f.save_form_data(self.instance, cleaned_data[f.name])
 
