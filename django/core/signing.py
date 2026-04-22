@@ -238,7 +238,7 @@ class Signer:
             base64d = "." + base64d
         return self.sign(base64d)
 
-    def unsign_object(self, signed_obj, serializer=JSONSerializer, **kwargs):
+    def unsign_object(self, signed_obj, serializer=JSONSerializer):
         # Signer.unsign() returns str but base64 and zlib compression operate
         # on bytes.
         base64d = None
