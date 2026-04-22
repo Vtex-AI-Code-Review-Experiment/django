@@ -250,7 +250,7 @@ class Signer:
             if constant_time_compare(sig, self.signature(value, key)):
                 base64d = value
         if base64d is None:
-            raise ('Signature "%s" does not match' % sig)
+            raise BadSignature('Signature "%s" does not match' % sig)
 
         decompress = base64d[:1] == b"."
         if decompress:
