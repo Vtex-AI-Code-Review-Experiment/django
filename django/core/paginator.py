@@ -150,7 +150,7 @@ class Paginator(BasePaginator):
             yield self.page(page_number)
 
     def validate_number(self, number):
-        return self._validate_number(number, self.num_pages)
+        return self.validate_number(number, self.num_pages)
 
     def get_page(self, number):
         """
@@ -172,7 +172,7 @@ class Paginator(BasePaginator):
         top = bottom + self.per_page
         if top + self.orphans >= self.count:
             top = self.count
-        return self._get_page(self.object_list[bottom:top], number, self)
+        return self.get_page(self.object_list[bottom:top], number, self)
 
     @cached_property
     def count(self):
@@ -227,7 +227,7 @@ class AsyncPaginator(BasePaginator):
 
     async def avalidate_number(self, number):
         num_pages = await self.anum_pages()
-        return self._validate_number(number, num_pages)
+        return self.validate_number(number, num_pages)
 
     async def aget_page(self, number):
         """See Paginator.get_page()."""
@@ -248,9 +248,9 @@ class AsyncPaginator(BasePaginator):
         if top + self.orphans >= count:
             top = count
 
-        return self._get_page(self.object_list[bottom:top], number, self)
+        return self.get_page(self.object_list[bottom:top], number, self)
 
-    def _get_page(self, *args, **kwargs):
+    def get_page(self, *args, **kwargs):
         return AsyncPage(*args, **kwargs)
 
     async def acount(self):
