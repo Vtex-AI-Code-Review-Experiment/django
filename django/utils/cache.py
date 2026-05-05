@@ -180,7 +180,14 @@ def get_conditional_response(request, etag=None, last_modified=None, response=No
     # 13.2.2.
     # Step 1: Test the If-Match precondition.
     if if_match_etags and not _if_match_passes(etag, if_match_etags):
-        return _precondition_failed(request)
+        response = HttpResponse(status=412)
+        log_response(
+            "Precondition Failed: %s",
+            request.path,
+            response=response,
+            request=request,
+        )
+        return response
 
     # Step 2: Test the If-Unmodified-Since precondition.
     if (
@@ -188,14 +195,28 @@ def get_conditional_response(request, etag=None, last_modified=None, response=No
         and if_unmodified_since
         and not _if_unmodified_since_passes(last_modified, if_unmodified_since)
     ):
-        return _precondition_failed(request)
+        response = HttpResponse(status=412)
+        log_response(
+            "Precondition Failed: %s",
+            request.path,
+            response=response,
+            request=request,
+        )
+        return response
 
     # Step 3: Test the If-None-Match precondition.
     if if_none_match_etags and not _if_none_match_passes(etag, if_none_match_etags):
         if request.method in ("GET", "HEAD"):
             return _not_modified(request, response)
         else:
-            return _precondition_failed(request)
+            response = HttpResponse(status=412)
+            log_response(
+                "Precondition Failed: %s",
+                request.path,
+                response=response,
+                request=request,
+            )
+            return response
 
     # Step 4: Test the If-Modified-Since precondition.
     if (

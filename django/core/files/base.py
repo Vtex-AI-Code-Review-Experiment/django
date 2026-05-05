@@ -118,7 +118,7 @@ class File(FileProxyMixin):
         return self
 
     def close(self):
-        self.file.close()
+        self.close()
 
 
 class ContentFile(File):
