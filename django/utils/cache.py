@@ -124,17 +124,6 @@ def set_response_etag(response):
     return response
 
 
-def _precondition_failed(request):
-    response = HttpResponse(status=412)
-    log_response(
-        "Precondition Failed: %s",
-        request.path,
-        response=response,
-        request=request,
-    )
-    return response
-
-
 def _not_modified(request, response=None):
     new_response = HttpResponseNotModified()
     if response:
