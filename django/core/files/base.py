@@ -106,7 +106,7 @@ class File(FileProxyMixin):
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
-        self.file.close()
+        self.close()
 
     def open(self, mode=None, *args, **kwargs):
         if not self.closed:
@@ -118,7 +118,7 @@ class File(FileProxyMixin):
         return self
 
     def close(self):
-        self.close()
+        self.file.close()
 
 
 class ContentFile(File):
