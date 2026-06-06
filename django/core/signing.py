@@ -242,6 +242,7 @@ class Signer:
         # Signer.unsign() returns str but base64 and zlib compression operate
         # on bytes.
         base64d = self.unsign(signed_obj, **kwargs).encode()
+
         decompress = base64d[:1] == b"."
         if decompress:
             # It's compressed; uncompress it first.
@@ -262,7 +263,9 @@ class TimestampSigner(Signer):
 
     def unsign(self, value, max_age=None):
         """
-        Retrieve original value and check it wasn't signed more
+        Retrieve original value and
+
+        check it wasn't signed more
         than max_age seconds ago.
         """
         result = super().unsign(value)

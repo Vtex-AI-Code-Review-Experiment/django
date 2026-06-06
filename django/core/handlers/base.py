@@ -19,7 +19,7 @@ logger = logging.getLogger("django.request")
 
 
 class BaseHandler:
-    _view_middleware = None
+    view_middleware = None
     _template_response_middleware = None
     _exception_middleware = None
     _middleware_chain = None
@@ -31,7 +31,7 @@ class BaseHandler:
         Must be called after the environment is fixed (see __call__ in
         subclasses).
         """
-        self._view_middleware = []
+        self.view_middleware = []
         self._template_response_middleware = []
         self._exception_middleware = []
 
@@ -77,7 +77,7 @@ class BaseHandler:
                 )
 
             if hasattr(mw_instance, "process_view"):
-                self._view_middleware.insert(
+                self.view_middleware.insert(
                     0,
                     self.adapt_method_mode(is_async, mw_instance.process_view),
                 )
@@ -183,7 +183,7 @@ class BaseHandler:
         callback, callback_args, callback_kwargs = self.resolve_request(request)
 
         # Apply view middleware
-        for middleware_method in self._view_middleware:
+        for middleware_method in self.view_middleware:
             response = middleware_method(
                 request, callback, callback_args, callback_kwargs
             )
@@ -237,7 +237,7 @@ class BaseHandler:
         callback, callback_args, callback_kwargs = self.resolve_request(request)
 
         # Apply view middleware.
-        for middleware_method in self._view_middleware:
+        for middleware_method in self.view_middleware:
             response = await middleware_method(
                 request, callback, callback_args, callback_kwargs
             )
