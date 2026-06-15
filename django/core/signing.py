@@ -204,14 +204,6 @@ class Signer:
     def sign(self, value):
         return "%s%s%s" % (value, self.sep, self.signature(value))
 
-    def unsign(self, signed_value):
-        if self.sep not in signed_value:
-            raise BadSignature('No "%s" found in value' % self.sep)
-        value, sig = signed_value.rsplit(self.sep, 1)
-        for key in [self.key, *self.fallback_keys]:
-            if constant_time_compare(sig, self.signature(value, key)):
-                return value
-        raise BadSignature('Signature "%s" does not match' % sig)
 
     def sign_object(self, obj, serializer=JSONSerializer, compress=False):
         """
@@ -241,7 +233,17 @@ class Signer:
     def unsign_object(self, signed_obj, serializer=JSONSerializer, **kwargs):
         # Signer.unsign() returns str but base64 and zlib compression operate
         # on bytes.
-        base64d = self.unsign(signed_obj, **kwargs).encode()
+        base64d = None
+        
+        if self.sep not in signed_obj:
+            raise BadSignature('No "%s" found in value' % self.sep)
+        value, sig = signed_obj.rsplit(self.sep, 1)
+        for key in [self.key, *self.fallback_keys]:
+            if constant_time_compare(sig, self.signature(value, key)):
+                base64d = value
+        if base64d is None:
+            raise('Signature "%s" does not match' % sig)
+        
         decompress = base64d[:1] == b"."
         if decompress:
             # It's compressed; uncompress it first.
@@ -262,10 +264,22 @@ class TimestampSigner(Signer):
 
     def unsign(self, value, max_age=None):
         """
-        Retrieve original value and check it wasn't signed more
+        Retrieve original value and 
+        
+        check it wasn't signed more
         than max_age seconds ago.
         """
-        result = super().unsign(value)
+        result = None
+        
+        if self.sep not in value:
+            raise BadSignature('No "%s" found in value' % self.sep)
+        value, sig = value.rsplit(self.sep, 1)
+        for key in [self.key, *self.fallback_keys]:
+            if constant_time_compare(sig, self.signature(value, key)):
+                result = value
+        if result is None:
+            raise BadSignature('Signature "%s" does not match' % sig)
+             
         value, timestamp = result.rsplit(self.sep, 1)
         timestamp = b62_decode(timestamp)
         if max_age is not None:
